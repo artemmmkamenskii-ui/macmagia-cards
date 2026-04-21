@@ -404,7 +404,8 @@ input {
 .hero-carousel__image-photo,
 .hero-carousel__thumb-photo,
 .product-card__cover-photo {
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
 }
 
 .product-card__cover {
@@ -1025,6 +1026,11 @@ input {
     grid-template-columns: 1fr;
   }
 
+  .catalog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
   .hero__image-wrap {
     min-height: 240px;
   }
@@ -1034,7 +1040,29 @@ input {
   }
 
   .product-card__cover {
-    min-height: 240px;
+    min-height: 180px;
+  }
+
+  .product-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .product-card__top h3 {
+    font-size: 1.05rem;
+  }
+
+  .product-card__price span {
+    font-size: 1.35rem;
+  }
+
+  .product-card__price small {
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .product-card__actions {
+    gap: 8px;
   }
 
   .hero-carousel__image,

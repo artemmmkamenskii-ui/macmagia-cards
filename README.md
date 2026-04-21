@@ -26,3 +26,17 @@
 - замените черновые тексты на ваши реальные тексты;
 - подставьте юридические данные в страницы `policy` и `offer`;
 - настройте webhook ЮKassa на маршрут `/api/payment/webhook`.
+
+## Автодеплой через GitHub Actions
+
+После настройки workflow `.github/workflows/deploy.yml` достаточно сделать `git push` в `main`:
+
+1. Проект отправится на сервер в `~/macmagia` через `rsync`;
+2. На сервере выполнятся `npm install`, `npm run build`, `pm2 restart macmagia`.
+
+Добавьте в `GitHub -> Settings -> Secrets and variables -> Actions` секреты:
+
+- `DEPLOY_HOST` — IP сервера (например `103.76.55.254`);
+- `DEPLOY_PORT` — порт SSH (`22`);
+- `DEPLOY_USER` — пользователь сервера (`ubuntu`);
+- `DEPLOY_SSH_KEY` — приватный SSH-ключ для доступа на сервер.
