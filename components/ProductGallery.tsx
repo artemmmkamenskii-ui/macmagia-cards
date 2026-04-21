@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useRef, useState, type TouchEvent } from "react";
+import { useMemo, useRef, useState, type MouseEvent, type TouchEvent } from "react";
 
 type ProductGalleryProps = {
   title: string;
@@ -63,6 +63,30 @@ export default function ProductGallery({ title, coverImageSrc, gallery }: Produc
     }
   }
 
+  function handlePreviousClick(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    showPrevious();
+  }
+
+  function handleNextClick(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    showNext();
+  }
+
+  function handlePreviousTouchEnd(event: TouchEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    showPrevious();
+  }
+
+  function handleNextTouchEnd(event: TouchEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    showNext();
+  }
+
   return (
     <div
       className="product-page__main-photo product-page__main-photo--image"
@@ -82,18 +106,18 @@ export default function ProductGallery({ title, coverImageSrc, gallery }: Produc
           <button
             aria-label="Предыдущее фото"
             type="button"
-            onClick={showPrevious}
+            onClick={handlePreviousClick}
             onTouchStart={(event) => event.stopPropagation()}
-            onTouchEnd={(event) => event.stopPropagation()}
+            onTouchEnd={handlePreviousTouchEnd}
           >
             ←
           </button>
           <button
             aria-label="Следующее фото"
             type="button"
-            onClick={showNext}
+            onClick={handleNextClick}
             onTouchStart={(event) => event.stopPropagation()}
-            onTouchEnd={(event) => event.stopPropagation()}
+            onTouchEnd={handleNextTouchEnd}
           >
             →
           </button>
