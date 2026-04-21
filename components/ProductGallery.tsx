@@ -34,6 +34,12 @@ export default function ProductGallery({ title, coverImageSrc, gallery }: Produc
   }
 
   function handleTouchStart(event: TouchEvent<HTMLDivElement>) {
+    const targetElement = event.target as HTMLElement;
+    if (targetElement.closest(".product-page__controls")) {
+      touchStartX.current = null;
+      return;
+    }
+
     touchStartX.current = event.changedTouches[0]?.clientX ?? null;
   }
 
@@ -73,10 +79,22 @@ export default function ProductGallery({ title, coverImageSrc, gallery }: Produc
 
       {images.length > 1 ? (
         <div className="product-page__controls">
-          <button aria-label="Предыдущее фото" type="button" onClick={showPrevious}>
+          <button
+            aria-label="Предыдущее фото"
+            type="button"
+            onClick={showPrevious}
+            onTouchStart={(event) => event.stopPropagation()}
+            onTouchEnd={(event) => event.stopPropagation()}
+          >
             ←
           </button>
-          <button aria-label="Следующее фото" type="button" onClick={showNext}>
+          <button
+            aria-label="Следующее фото"
+            type="button"
+            onClick={showNext}
+            onTouchStart={(event) => event.stopPropagation()}
+            onTouchEnd={(event) => event.stopPropagation()}
+          >
             →
           </button>
         </div>
