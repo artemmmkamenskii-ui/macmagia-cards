@@ -838,8 +838,10 @@ input {
 
 .product-page__hero {
   display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 0.8fr);
+  grid-template-columns: 1fr;
   gap: 28px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .product-page__main-photo {
@@ -901,6 +903,10 @@ input {
   display: flex;
   flex-direction: column;
   gap: 18px;
+}
+
+.product-page__info--full {
+  gap: 16px;
 }
 
 .product-page__info h1 {
