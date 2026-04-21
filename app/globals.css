@@ -845,8 +845,10 @@ input {
 }
 
 .product-page__main-photo {
-  min-height: 460px;
-  padding: 28px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  padding: 0;
 }
 
 .product-page__main-photo--image,
@@ -871,7 +873,9 @@ input {
 }
 
 .product-page__photo {
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
+  background: #fff;
 }
 
 .product-page__controls {
@@ -1073,7 +1077,7 @@ input {
 
   .hero-carousel__image,
   .product-page__main-photo {
-    min-height: 260px;
+    min-height: 0;
   }
 
   .product-card__controls button,
