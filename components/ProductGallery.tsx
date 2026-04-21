@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState, type TouchEvent } from "react";
 
 type ProductGalleryProps = {
   title: string;
@@ -15,6 +15,7 @@ export default function ProductGallery({ title, coverImageSrc, gallery }: Produc
     return Array.from(new Set(merged));
   }, [coverImageSrc, gallery]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const touchStartX = useRef<number | null>(null);
 
   if (images.length === 0) {
     return (
@@ -32,52 +33,54 @@ export default function ProductGallery({ title, coverImageSrc, gallery }: Produc
     setActiveIndex((current) => (current === images.length - 1 ? 0 : current + 1));
   }
 
-  return (
-    <>
-      <div className="product-page__main-photo product-page__main-photo--image">
-        <Image
-          src={images[activeIndex]}
-          alt={`Фото колоды ${title}`}
-          fill
-          className="product-page__photo"
-          sizes="(max-width: 980px) 100vw, 42vw"
-        />
+  function handleTouchStart(event: TouchEvent<HTMLDivElement>) {
+    touchStartX.current = event.changedTouches[0]?.clientX ?? null;
+  }
 
-        {images.length > 1 ? (
-          <div className="product-page__controls">
-            <button aria-label="Предыдущее фото" type="button" onClick={showPrevious}>
-              ←
-            </button>
-            <button aria-label="Следующее фото" type="button" onClick={showNext}>
-              →
-            </button>
-          </div>
-        ) : null}
-      </div>
+  function handleTouchEnd(event: TouchEvent<HTMLDivElement>) {
+    if (touchStartX.current === null) {
+      return;
+    }
+
+    const endX = event.changedTouches[0]?.clientX ?? touchStartX.current;
+    const deltaX = endX - touchStartX.current;
+    touchStartX.current = null;
+
+    if (Math.abs(deltaX) < 35) {
+      return;
+    }
+
+    if (deltaX > 0) {
+      showPrevious();
+    } else {
+      showNext();
+    }
+  }
+
+  return (
+    <div
+      className="product-page__main-photo product-page__main-photo--image"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      <Image
+        src={images[activeIndex]}
+        alt={`Фото колоды ${title}`}
+        fill
+        className="product-page__photo"
+        sizes="(max-width: 980px) 100vw, 42vw"
+      />
 
       {images.length > 1 ? (
-        <div className="product-page__thumbs">
-          {images.map((imageSrc, index) => (
-            <button
-              key={imageSrc}
-              type="button"
-              className={`product-page__thumb product-page__thumb--image${
-                index === activeIndex ? " product-page__thumb--active" : ""
-              }`}
-              onClick={() => setActiveIndex(index)}
-              aria-label={`Показать фото ${index + 1}`}
-            >
-              <Image
-                src={imageSrc}
-                alt={`Миниатюра колоды ${title}`}
-                fill
-                className="product-page__photo"
-                sizes="(max-width: 980px) 50vw, 10vw"
-              />
-            </button>
-          ))}
+        <div className="product-page__controls">
+          <button aria-label="Предыдущее фото" type="button" onClick={showPrevious}>
+            ←
+          </button>
+          <button aria-label="Следующее фото" type="button" onClick={showNext}>
+            →
+          </button>
         </div>
       ) : null}
-    </>
+    </div>
   );
 }
