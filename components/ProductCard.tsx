@@ -37,12 +37,15 @@ export default function ProductCard({ product, isFeatured = false }: ProductCard
         <Link className="product-card__media-link" href={`/products/${product.id}`}>
           {galleryImages.length > 0 ? (
             <div className="product-card__cover">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={withBasePath(galleryImages[activeIndex])}
-                alt={`Обложка колоды ${product.title}`}
-                className="product-card__cover-photo"
-              />
+              {galleryImages.map((src, i) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={src}
+                  src={withBasePath(src)}
+                  alt={i === activeIndex ? `Обложка колоды ${product.title}` : ""}
+                  className={`product-card__cover-photo${i === activeIndex ? " product-card__cover-photo--active" : ""}`}
+                />
+              ))}
             </div>
           ) : (
             <div className="product-card__placeholder">

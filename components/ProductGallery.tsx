@@ -1,7 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useMemo, useRef, useState, type MouseEvent, type TouchEvent } from "react";
+
+import { withBasePath } from "@/lib/basePath";
 
 type ProductGalleryProps = {
   title: string;
@@ -39,28 +40,16 @@ export default function ProductGallery({ title, coverImageSrc, gallery }: Produc
       touchStartX.current = null;
       return;
     }
-
     touchStartX.current = event.changedTouches[0]?.clientX ?? null;
   }
 
   function handleTouchEnd(event: TouchEvent<HTMLDivElement>) {
-    if (touchStartX.current === null) {
-      return;
-    }
-
+    if (touchStartX.current === null) return;
     const endX = event.changedTouches[0]?.clientX ?? touchStartX.current;
     const deltaX = endX - touchStartX.current;
     touchStartX.current = null;
-
-    if (Math.abs(deltaX) < 35) {
-      return;
-    }
-
-    if (deltaX > 0) {
-      showPrevious();
-    } else {
-      showNext();
-    }
+    if (Math.abs(deltaX) < 35) return;
+    if (deltaX > 0) showPrevious(); else showNext();
   }
 
   function handlePreviousClick(event: MouseEvent<HTMLButtonElement>) {
@@ -93,14 +82,15 @@ export default function ProductGallery({ title, coverImageSrc, gallery }: Produc
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <Image
-        key={images[activeIndex]}
-        src={images[activeIndex]}
-        alt={`Фото колоды ${title}`}
-        fill
-        className="product-page__photo"
-        sizes="(max-width: 980px) 100vw, 42vw"
-      />
+      {images.map((src, i) => (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={src}
+          src={withBasePath(src)}
+          alt={i === activeIndex ? `Фото колоды ${title}` : ""}
+          className={`product-page__photo${i === activeIndex ? " product-page__photo--active" : ""}`}
+        />
+      ))}
 
       {images.length > 1 ? (
         <div className="product-page__controls">
