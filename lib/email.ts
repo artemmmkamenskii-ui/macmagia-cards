@@ -17,7 +17,9 @@ function getRequiredEnv(name: string) {
 }
 
 export function isEmailConfigured() {
-  return Boolean(process.env.RESEND_API_KEY && process.env.DELIVERY_FROM_EMAIL);
+  return Boolean(
+    process.env.UNISENDER_API_KEY && process.env.UNISENDER_LIST_ID && process.env.DELIVERY_FROM_EMAIL
+  );
 }
 
 export async function sendDeliveryEmail({
@@ -31,8 +33,10 @@ export async function sendDeliveryEmail({
     throw new Error("Products not found");
   }
 
-  const apiKey = getRequiredEnv("RESEND_API_KEY");
+  const apiKey = getRequiredEnv("UNISENDER_API_KEY");
+  const listId = getRequiredEnv("UNISENDER_LIST_ID");
   const from = getRequiredEnv("DELIVERY_FROM_EMAIL");
+  const fromName = process.env.DELIVERY_FROM_NAME || "MacMagia";
   const customerName = name.trim() || "друг";
 
   const productsHtml = totals.items
@@ -64,27 +68,51 @@ export async function sendDeliveryEmail({
     </div>
   `;
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      from,
-      to: email,
-      subject:
-        totals.items.length === 1
-          ? `Ваша электронная колода: ${totals.items[0].title}`
-          : `Ваш заказ электронных колод: ${totals.items.length} шт.`,
-      html
-    })
+  const subject =
+    totals.items.length === 1
+      ? `Ваша электронная колода: ${totals.items[0].title}`
+      : `Ваш заказ электронных колод: ${totals.items.length} шт.`;
+
+  const body = new URLSearchParams({
+    format: "json",
+    api_key: apiKey,
+    email,
+    sender_name: fromName,
+    sender_email: from,
+    subject,
+    body: html,
+    list_id: listId
   });
 
+  const response = await fetch("https://api.unisender.com/ru/api/sendEmail", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: body.toString()
+  });
+
+  const payloadText = await response.text();
+
   if (!response.ok) {
-    const details = await response.text();
-    throw new Error(`Resend delivery failed: ${details}`);
+    throw new Error(`UniSender delivery failed: ${payloadText}`);
   }
 
-  return response.json();
+  let payload: unknown;
+
+  try {
+    payload = JSON.parse(payloadText);
+  } catch {
+    throw new Error(`UniSender delivery failed: ${payloadText}`);
+  }
+
+  if (payload && typeof payload === "object" && "error" in payload && payload.error) {
+    const message =
+      "error_info" in payload && typeof payload.error_info === "string"
+        ? payload.error_info
+        : String(payload.error);
+    throw new Error(`UniSender delivery failed: ${message}`);
+  }
+
+  return payload;
 }

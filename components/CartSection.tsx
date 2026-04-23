@@ -3,6 +3,7 @@
 import { useMemo, useState, type FormEvent } from "react";
 
 import { useCart } from "@/components/CartProvider";
+import { withBasePath } from "@/lib/basePath";
 import { BULK_DISCOUNT_PERCENT, BULK_DISCOUNT_THRESHOLD } from "@/lib/pricing";
 
 type CheckoutState = {
@@ -42,7 +43,7 @@ export default function CartSection() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/payment/create", {
+      const response = await fetch(withBasePath("/api/payment/create"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

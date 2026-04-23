@@ -1,3 +1,4 @@
+import { getPublicAppUrl } from "@/lib/basePath";
 import { calculateOrderTotals } from "@/lib/pricing";
 
 type YooKassaAmount = {
@@ -32,9 +33,6 @@ function getRequiredEnv(name: string) {
   return value;
 }
 
-function getBaseUrl() {
-  return process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-}
 
 export function isYooKassaConfigured() {
   return Boolean(process.env.YOOKASSA_SHOP_ID && process.env.YOOKASSA_SECRET_KEY);
@@ -78,7 +76,7 @@ export async function createYooKassaPayment({
       capture: true,
       confirmation: {
         type: "redirect",
-        return_url: `${getBaseUrl()}/success`
+        return_url: `${getPublicAppUrl()}/success`
       },
       description,
       metadata: {

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import CartSection from "@/components/CartSection";
 import BenefitsSection from "@/components/Sections/BenefitsSection";
 import CatalogSection from "@/components/Sections/CatalogSection";
@@ -20,9 +22,9 @@ export default function HomePage() {
       <footer className="footer">
         <p>Продажа электронных колод</p>
         <nav>
-          <a href="/policy">Политика конфиденциальности</a>
-          <a href="/offer">Публичная оферта</a>
-          <a href="/requisites">Реквизиты</a>
+          <Link href="/policy">Политика конфиденциальности</Link>
+          <Link href="/offer">Публичная оферта</Link>
+          <Link href="/requisites">Реквизиты</Link>
         </nav>
       </footer>
     </main>

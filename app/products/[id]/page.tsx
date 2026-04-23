@@ -41,12 +41,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <p className="product-page__subtitle">{product.subtitle}</p>
 
             <div className="product-page__buttons">
-              <a className="button button--ghost" href="/#cart">
+              <Link className="button button--ghost" href="/#cart">
                 Перейти в корзину
-              </a>
-              <a className="button button--secondary" href="/#faq">
+              </Link>
+              <Link className="button button--secondary" href="/#faq">
                 Условия покупки
-              </a>
+              </Link>
             </div>
 
             <p className="product-page__text">{product.detailText}</p>

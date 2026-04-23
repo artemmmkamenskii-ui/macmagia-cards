@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import ClearCartOnSuccess from "@/components/ClearCartOnSuccess";
 
 export default function SuccessPage() {
@@ -11,9 +13,9 @@ export default function SuccessPage() {
           Если платеж подтвержден, письмо со ссылками на все купленные колоды будет отправлено на
           указанный email автоматически.
         </p>
-        <a className="button button--primary" href="/">
+        <Link className="button button--primary" href="/">
           Вернуться на лендинг
-        </a>
+        </Link>
       </div>
     </main>
   );
