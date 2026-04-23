@@ -94,6 +94,7 @@ export default function ProductGallery({ title, coverImageSrc, gallery }: Produc
       onTouchEnd={handleTouchEnd}
     >
       <Image
+        key={images[activeIndex]}
         src={images[activeIndex]}
         alt={`Фото колоды ${title}`}
         fill

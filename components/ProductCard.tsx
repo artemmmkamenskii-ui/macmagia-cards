@@ -38,6 +38,7 @@ export default function ProductCard({ product, isFeatured = false }: ProductCard
           {galleryImages.length > 0 ? (
             <div className="product-card__cover">
               <Image
+                key={galleryImages[activeIndex]}
                 src={galleryImages[activeIndex]}
                 alt={`Обложка колоды ${product.title}`}
                 fill
