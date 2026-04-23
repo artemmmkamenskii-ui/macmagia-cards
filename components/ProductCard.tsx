@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import AddToCartButton from "@/components/AddToCartButton";
+import { withBasePath } from "@/lib/basePath";
 import type { Product } from "@/data/products";
 
 type ProductCardProps = {
@@ -37,13 +37,11 @@ export default function ProductCard({ product, isFeatured = false }: ProductCard
         <Link className="product-card__media-link" href={`/products/${product.id}`}>
           {galleryImages.length > 0 ? (
             <div className="product-card__cover">
-              <Image
-                key={galleryImages[activeIndex]}
-                src={galleryImages[activeIndex]}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={withBasePath(galleryImages[activeIndex])}
                 alt={`Обложка колоды ${product.title}`}
-                fill
                 className="product-card__cover-photo"
-                sizes="(max-width: 980px) 100vw, 30vw"
               />
             </div>
           ) : (
