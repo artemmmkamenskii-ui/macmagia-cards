@@ -93,14 +93,16 @@ export default function ProductGallery({ title, coverImageSrc, gallery }: Produc
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <Image
-        key={images[activeIndex]}
-        src={images[activeIndex]}
-        alt={`Фото колоды ${title}`}
-        fill
-        className="product-page__photo"
-        sizes="(max-width: 980px) 100vw, 42vw"
-      />
+      {images.map((src, i) => (
+        <Image
+          key={src}
+          src={src}
+          alt={`Фото колоды ${title}`}
+          fill
+          className={`product-page__photo${i === activeIndex ? " product-page__photo--active" : ""}`}
+          sizes="(max-width: 980px) 100vw, 42vw"
+        />
+      ))}
 
       {images.length > 1 ? (
         <div className="product-page__controls">
