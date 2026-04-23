@@ -14,7 +14,7 @@ export type Product = {
 };
 
 function buildGallery(folder: string, count: number) {
-  return Array.from({ length: count }, (_, index) => `/decks/${folder}/${index + 1}.png`);
+  return Array.from({ length: count }, (_, index) => `/decks/${folder}/${index + 1}.jpg`);
 }
 
 export type HeroSlide = {
@@ -37,7 +37,7 @@ export const products: Product[] = [
       "В комплекте: инструкция с практиками использования. PDF для печати."
     ],
     placeholderNote: "К себе. 53 дня",
-    coverImageSrc: "/decks/k-sebe/1.png",
+    coverImageSrc: "/decks/k-sebe/1.jpg",
     detailText: "53 карты, 53 вопроса — ежедневный ритуал саморефлексии. Колода ведёт к себе через честные вопросы. Без оценок и правильных ответов.",
     gallery: buildGallery("k-sebe", 6),
     yandexDiskUrl: "https://disk.yandex.ru/d/example-k-sebe"
@@ -54,7 +54,7 @@ export const products: Product[] = [
       "В комплекте: структура сессии, техники для себя и специалистов. PDF."
     ],
     placeholderNote: "Ты и я. Мы",
-    coverImageSrc: "/decks/ty-i-ya/1.png",
+    coverImageSrc: "/decks/ty-i-ya/1.jpg",
     detailText: "45 карт для работы с созависимостью, границами и возвращением к себе.",
     gallery: buildGallery("ty-i-ya", 6),
     yandexDiskUrl: "https://disk.yandex.ru/d/example-ty-i-ya"
@@ -71,7 +71,7 @@ export const products: Product[] = [
       "В комплекте: телесные практики, вопросы для самоисследования. PDF."
     ],
     placeholderNote: "Моё тело — мой дом",
-    coverImageSrc: "/decks/moe-telo/1.png",
+    coverImageSrc: "/decks/moe-telo/1.jpg",
     detailText: "56 карт для тех, кто устал воевать с собой.",
     gallery: buildGallery("moe-telo", 5),
     yandexDiskUrl: "https://disk.yandex.ru/d/example-moe-telo"
@@ -89,7 +89,7 @@ export const products: Product[] = [
       "В комплекте: инструкция с техниками. PDF."
     ],
     placeholderNote: "Пусть. Дыши",
-    coverImageSrc: "/decks/dyshi/1.png",
+    coverImageSrc: "/decks/dyshi/1.jpg",
     detailText: "45 карт для работы с тревогой и паническими атаками.",
     gallery: buildGallery("dyshi", 7),
     yandexDiskUrl: "https://disk.yandex.ru/d/example-dyshi"
@@ -106,7 +106,7 @@ export const products: Product[] = [
       "В комплекте: инструкция по работе с архетипами. PDF."
     ],
     placeholderNote: "Женский круг. Мужской путь",
-    coverImageSrc: "/decks/zhenskiy-krug-muzhskoy-put/1.png",
+    coverImageSrc: "/decks/zhenskiy-krug-muzhskoy-put/1.jpg",
     detailText: "43 карты с архетипами сказок (Василиса, Баба-яга, Иван-царевич и др.).",
     gallery: buildGallery("zhenskiy-krug-muzhskoy-put", 5),
     yandexDiskUrl: "https://disk.yandex.ru/d/example-zhenskiy-krug"
@@ -123,7 +123,7 @@ export const products: Product[] = [
       "В комплекте: руководство по прохождению пути. PDF."
     ],
     placeholderNote: "Источник. Путь к себе",
-    coverImageSrc: "/decks/istochnik/1.png",
+    coverImageSrc: "/decks/istochnik/1.jpg",
     detailText: "42 карты, 8 разделов: архетипы, стихии, состояния, дары и финал — Источник.",
     gallery: buildGallery("istochnik", 6),
     yandexDiskUrl: "https://disk.yandex.ru/d/example-istochnik"
@@ -141,7 +141,7 @@ export const products: Product[] = [
       "В комплекте: инструкция. PDF."
     ],
     placeholderNote: "Магия внутри",
-    coverImageSrc: "/decks/magiya-vnutri/1.png",
+    coverImageSrc: "/decks/magiya-vnutri/1.jpg",
     detailText: "36 карт-мантр для возвращения к себе.",
     gallery: buildGallery("magiya-vnutri", 6),
     yandexDiskUrl: "https://disk.yandex.ru/d/example-magiya-vnutri"
@@ -158,7 +158,7 @@ export const products: Product[] = [
       "В комплекте: методичка для специалистов. PDF."
     ],
     placeholderNote: "Я и моя мама",
-    coverImageSrc: "/decks/mama/1.png",
+    coverImageSrc: "/decks/mama/1.jpg",
     detailText: "45 карт для работы с отношениями с матерью, сепарацией и принятием.",
     gallery: buildGallery("mama", 6),
     yandexDiskUrl: "https://disk.yandex.ru/d/example-mama"
