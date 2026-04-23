@@ -98,7 +98,6 @@ export default function ProductGallery({ title, coverImageSrc, gallery }: Produc
         src={images[activeIndex]}
         alt={`Фото колоды ${title}`}
         fill
-        unoptimized
         className="product-page__photo"
         sizes="(max-width: 980px) 100vw, 42vw"
       />

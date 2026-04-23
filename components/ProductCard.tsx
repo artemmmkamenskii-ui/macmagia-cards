@@ -42,7 +42,6 @@ export default function ProductCard({ product, isFeatured = false }: ProductCard
                 src={galleryImages[activeIndex]}
                 alt={`Обложка колоды ${product.title}`}
                 fill
-                unoptimized
                 className="product-card__cover-photo"
                 sizes="(max-width: 980px) 100vw, 30vw"
               />
