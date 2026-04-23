@@ -63,3 +63,10 @@ jobs:
             pm2 restart macmagia || pm2 start npm --name macmagia -- start
             pm2 save
           EOF
+
+      - name: Remove nginx redirect / → /cards (if sudo NOPASS for deploy user)
+        continue-on-error: true
+        run: |
+          ssh -p "${{ secrets.DEPLOY_PORT }}" -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
+            "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+            'if [ -f "$HOME/macmagia/deploy/remove-nginx-root-to-cards.sh" ]; then bash "$HOME/macmagia/deploy/remove-nginx-root-to-cards.sh" || echo "Nginx fix failed (add NOPASSWD sudo for this user, or run the script on the server by hand)."; else echo "Nginx fix script not found."; fi'

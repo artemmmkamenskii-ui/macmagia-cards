@@ -16,7 +16,7 @@
 
 Заполните переменные в `.env.local`:
 
-- `NEXT_PUBLIC_SITE_URL` — **корень сайта без** `/cards` (например `https://example.com` или `http://localhost:3000`). Код сам добавит `/cards` для редиректа после оплаты;
+- `NEXT_PUBLIC_SITE_URL` — **корень сайта без** `/cards` (например `https://example.com` или `http://localhost:3000`). Код сам добавит `/cards` для `return_url` ЮKassa и публичных ссылок;
 - `YOOKASSA_SHOP_ID` и `YOOKASSA_SECRET_KEY` — доступы магазина;
 - `YOOKASSA_WEBHOOK_SECRET` — ваш дополнительный секрет для webhook, если используете его;
 - `UNISENDER_API_KEY` — ключ доступа к API в кабинете UniSender;
@@ -31,14 +31,24 @@
 - подставьте юридические данные в страницы `policy` и `offer`;
 - настройте webhook ЮKassa на URL вида `https://ВАШ_ДОМЕН/cards/api/payment/webhook` (секрет в заголовке `x-webhook-secret`, если используете `YOOKASSA_WEBHOOK_SECRET`).
 
-## Продакшн: почему `/` старый, а `/cards` падает
+## Снять редирект nginx с `/` на `/cards/`
 
-1. **Нужен деплой** — сделай `git add`, `commit`, `git push` в ветку `main`, дождись зелёного workflow `Deploy to Production` (на сервер зальётся код и пересоберётся `npm run build`).
-2. **Настрой `NEXT_PUBLIC_SITE_URL` на сервере** в `~/macmagia/.env.local` (файл не в git): `https://macmagia.ru` — **без** хвоста `/cards`, иначе редиректы и оплата соберут URL неправильно. После правки: `pm2 restart macmagia`.
-3. **Nginx** должен проксировать **все** пути, по которым ходит пользователь, в один и тот же `next start` (порт из `pm2`, часто 3000). Пример, если снаружи и корень, и подпапка должны попадать в Node:
+Редирект настраивается **на сервере в nginx**, не в Next. Скрипт: `deploy/remove-nginx-root-to-cards.sh` (после `rsync` лежит в `~/macmagia/deploy/`). На сервере вручную:
+
+```bash
+sudo bash ~/macmagia/deploy/remove-nginx-root-to-cards.sh
+```
+
+При деплое GitHub Actions пытается запустить тот же скрипт по SSH; для этого пользователю деплоя нужен **sudo без пароля** на команды из скрипта (или один раз запусти скрипт вручную на сервере с `sudo bash …`).
+
+## Продакшн: корень `/` и витрина `/cards`
+
+Само приложение Next живёт **только под** `/cards`. **Корень сайта** (`/`) в этом репозитории не настраивается: под него сделай **отдельный лендинг** (статика или другой проект) и **убери** в nginx старый редирект `location = /` → `/cards/`, если он остался.
+
+Прокидывай в Node (pm2) запросы с префиксом `/cards` (и вложенные пути, API, `_next`):
 
 ```nginx
-location / {
+location /cards/ {
     proxy_pass http://127.0.0.1:3000;
     proxy_http_version 1.1;
     proxy_set_header Host $host;
@@ -49,7 +59,7 @@ location / {
 }
 ```
 
-Не проксируй только `/` в Node, а `/cards` в статику: тогда [https://macmagia.ru/cards](https://macmagia.ru/cards) будет 404. После пуша с `redirects` в `next.config` с [https://macmagia.ru/](https://macmagia.ru/) должен сработать **301 → `/cards/`**.
+Корень `location /` задай на каталог с главным лендингом или на другой бэкенд.
 
 ## Автодеплой через GitHub Actions
 
