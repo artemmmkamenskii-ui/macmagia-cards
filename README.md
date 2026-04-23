@@ -31,12 +31,12 @@
 - подставьте юридические данные в страницы `policy` и `offer`;
 - настройте webhook ЮKassa на URL вида `https://ВАШ_ДОМЕН/cards/api/payment/webhook` (секрет в заголовке `x-webhook-secret`, если используете `YOOKASSA_WEBHOOK_SECRET`).
 
-## Снять редирект nginx с `/` на `/cards/`
+## Снять редирект nginx с `/` на `/cards/` или `/mac/`
 
-Редирект настраивается **на сервере в nginx**, не в Next. Скрипт: `deploy/remove-nginx-root-to-cards.sh` (после `rsync` лежит в `~/macmagia/deploy/`). На сервере вручную:
+Редирект настраивается **на сервере в nginx**, не в Next. Скрипт: `deploy/remove-nginx-root-redirect.sh` (после `rsync` лежит в `~/macmagia/deploy/`) — снимает `return 30x /cards/` и `return 30x /mac/` из `sites-enabled`. На сервере вручную:
 
 ```bash
-sudo bash ~/macmagia/deploy/remove-nginx-root-to-cards.sh
+sudo bash ~/macmagia/deploy/remove-nginx-root-redirect.sh
 ```
 
 При деплое GitHub Actions пытается запустить тот же скрипт по SSH; для этого пользователю деплоя нужен **sudo без пароля** на команды из скрипта (или один раз запусти скрипт вручную на сервере с `sudo bash …`).
