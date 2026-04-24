@@ -37,6 +37,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true });
     }
 
+    if (payment.metadata.source !== "cards") {
+      return NextResponse.json({ ok: true });
+    }
+
     const email = payment.metadata.email;
     const name = payment.metadata.name;
     const rawProductIds = payment.metadata.productIds;

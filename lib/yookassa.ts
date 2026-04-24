@@ -80,6 +80,7 @@ export async function createYooKassaPayment({
       },
       description,
       metadata: {
+        source: "cards",
         productIds: JSON.stringify(productIds),
         email,
         name,
