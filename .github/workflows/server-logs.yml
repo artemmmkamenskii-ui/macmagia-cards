@@ -1,0 +1,37 @@
+name: Server Logs
+
+on:
+  workflow_dispatch:
+    inputs:
+      lines:
+        description: "How many lines to show"
+        required: false
+        default: "200"
+
+jobs:
+  logs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup SSH key
+        shell: bash
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_SSH_KEY_B64: ${{ secrets.DEPLOY_SSH_KEY_B64 }}
+        run: |
+          set -e
+          mkdir -p ~/.ssh
+          if [ -n "$DEPLOY_SSH_KEY_B64" ]; then
+            echo "$DEPLOY_SSH_KEY_B64" | base64 -d > ~/.ssh/deploy_key
+          elif [ -n "$DEPLOY_SSH_KEY" ]; then
+            printf "%s" "$DEPLOY_SSH_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+          fi
+          chmod 600 ~/.ssh/deploy_key
+
+      - name: Add server to known_hosts
+        run: ssh-keyscan -p "${{ secrets.DEPLOY_PORT }}" "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Fetch pm2 logs
+        run: |
+          ssh -p "${{ secrets.DEPLOY_PORT }}" -i ~/.ssh/deploy_key \
+            "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+            "pm2 logs macmagia --nostream --lines ${{ github.event.inputs.lines }}"
