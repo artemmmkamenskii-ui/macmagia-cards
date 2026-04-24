@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { sendDeliveryEmail, isEmailConfigured } from "@/lib/email";
+import { isProcessed, markProcessed, unmarkProcessed } from "@/lib/idempotency";
 import { getYooKassaPayment, isYooKassaConfigured, verifyWebhookSecret } from "@/lib/yookassa";
 
 type YooKassaWebhookBody = {
@@ -31,7 +32,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    const payment = await getYooKassaPayment(body.object.id);
+    const paymentId = body.object.id;
+
+    const payment = await getYooKassaPayment(paymentId);
 
     if (!payment.paid || payment.status !== "succeeded" || !payment.metadata) {
       return NextResponse.json({ ok: true });
@@ -40,14 +43,30 @@ export async function POST(request: Request) {
     const source = payment.metadata.source;
 
     if (source !== "cards") {
-      if (source) {
-        const forwardUrl = `https://macmagia.ru/${source}/api/payment/webhook`;
-        await fetch(forwardUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body)
-        });
+      const forwardKey = `${paymentId}:forward:${source}`;
+      if (isProcessed(forwardKey)) {
+        return NextResponse.json({ ok: true });
       }
+      if (source) {
+        markProcessed(forwardKey);
+        try {
+          const forwardUrl = `https://macmagia.ru/${source}/api/payment/webhook`;
+          await fetch(forwardUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          });
+        } catch (forwardError) {
+          unmarkProcessed(forwardKey);
+          throw forwardError;
+        }
+      }
+      return NextResponse.json({ ok: true });
+    }
+
+    const emailKey = `${paymentId}:email`;
+    if (isProcessed(emailKey)) {
+      console.log(`[webhook] payment ${paymentId} already delivered, skipping retry`);
       return NextResponse.json({ ok: true });
     }
 
@@ -74,16 +93,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No products found in payment metadata." }, { status: 400 });
     }
 
+    markProcessed(emailKey);
     try {
-      await sendDeliveryEmail({
-        email,
-        name,
-        productIds
-      });
-      console.log(`[webhook] delivery email sent to ${email} for payment ${body.object.id}`);
+      await sendDeliveryEmail({ email, name, productIds });
+      console.log(`[webhook] delivery email sent to ${email} for payment ${paymentId}`);
     } catch (deliveryError) {
+      unmarkProcessed(emailKey);
       const reason = deliveryError instanceof Error ? deliveryError.message : String(deliveryError);
-      console.error(`[webhook] delivery email FAILED for ${email} (payment ${body.object.id}): ${reason}`);
+      console.error(`[webhook] delivery email FAILED for ${email} (payment ${paymentId}): ${reason}`);
       throw deliveryError;
     }
 
