@@ -79,6 +79,22 @@ export async function createYooKassaPayment({
         return_url: `${getPublicAppUrl()}/success`
       },
       description,
+      receipt: {
+        customer: { email },
+        items: totals.items.map((item) => {
+          const unitPrice = totals.qualifiesForDiscount
+            ? (totals.total / totals.quantity)
+            : item.price;
+          return {
+            description: item.title,
+            quantity: "1.00",
+            amount: { value: unitPrice.toFixed(2), currency: "RUB" },
+            vat_code: 1,
+            payment_mode: "full_payment",
+            payment_subject: "commodity"
+          };
+        })
+      },
       metadata: {
         source: "cards",
         productIds: JSON.stringify(productIds),
