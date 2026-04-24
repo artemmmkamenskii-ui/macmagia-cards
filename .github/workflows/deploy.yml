@@ -58,10 +58,14 @@ jobs:
           ssh -p "${{ secrets.DEPLOY_PORT }}" -i ~/.ssh/deploy_key \
             "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
             "ENV=~/macmagia/.env.local; touch \$ENV; \
-             grep -v '^NEXT_PUBLIC_SITE_URL=\|^YOOKASSA_' \$ENV > /tmp/_env.tmp && mv /tmp/_env.tmp \$ENV; \
+             grep -v '^NEXT_PUBLIC_SITE_URL=\|^YOOKASSA_\|^UNISENDER_\|^DELIVERY_' \$ENV > /tmp/_env.tmp && mv /tmp/_env.tmp \$ENV; \
              echo 'NEXT_PUBLIC_SITE_URL=https://macmagia.ru' >> \$ENV; \
              echo 'YOOKASSA_SHOP_ID=${{ secrets.YOOKASSA_SHOP_ID }}' >> \$ENV; \
-             echo 'YOOKASSA_SECRET_KEY=${{ secrets.YOOKASSA_SECRET_KEY }}' >> \$ENV"
+             echo 'YOOKASSA_SECRET_KEY=${{ secrets.YOOKASSA_SECRET_KEY }}' >> \$ENV; \
+             echo 'UNISENDER_API_KEY=${{ secrets.UNISENDER_API_KEY }}' >> \$ENV; \
+             echo 'UNISENDER_LIST_ID=${{ secrets.UNISENDER_LIST_ID }}' >> \$ENV; \
+             echo 'DELIVERY_FROM_EMAIL=${{ secrets.DELIVERY_FROM_EMAIL }}' >> \$ENV; \
+             echo 'DELIVERY_FROM_NAME=MacMagia' >> \$ENV"
 
       - name: Install, build and restart app
         run: |
