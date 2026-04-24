@@ -40,7 +40,7 @@ export const products: Product[] = [
     coverImageSrc: "/decks/k-sebe/1.jpg",
     detailText: "53 карты, 53 вопроса — ежедневный ритуал саморефлексии. Колода ведёт к себе через честные вопросы. Без оценок и правильных ответов.",
     gallery: buildGallery("k-sebe", 6),
-    yandexDiskUrl: "https://disk.yandex.ru/d/example-k-sebe"
+    yandexDiskUrl: "https://disk.yandex.ru/d/vhplzuuapSXnSw"
   },
   {
     id: "ty-i-ya",
@@ -57,7 +57,7 @@ export const products: Product[] = [
     coverImageSrc: "/decks/ty-i-ya/1.jpg",
     detailText: "45 карт для работы с созависимостью, границами и возвращением к себе.",
     gallery: buildGallery("ty-i-ya", 6),
-    yandexDiskUrl: "https://disk.yandex.ru/d/example-ty-i-ya"
+    yandexDiskUrl: "https://disk.yandex.ru/d/HZgQAE0_08wneA"
   },
   {
     id: "moe-telo",
@@ -74,7 +74,7 @@ export const products: Product[] = [
     coverImageSrc: "/decks/moe-telo/1.jpg",
     detailText: "56 карт для тех, кто устал воевать с собой.",
     gallery: buildGallery("moe-telo", 5),
-    yandexDiskUrl: "https://disk.yandex.ru/d/example-moe-telo"
+    yandexDiskUrl: "https://disk.yandex.ru/d/lzbizJ8sP-KNPQ"
   },
   {
     id: "dyshi",
@@ -92,7 +92,7 @@ export const products: Product[] = [
     coverImageSrc: "/decks/dyshi/1.jpg",
     detailText: "45 карт для работы с тревогой и паническими атаками.",
     gallery: buildGallery("dyshi", 7),
-    yandexDiskUrl: "https://disk.yandex.ru/d/example-dyshi"
+    yandexDiskUrl: "https://disk.yandex.ru/d/aTXZj-GS5Ltz0A"
   },
   {
     id: "zhenskiy-krug-muzhskoy-put",
@@ -109,7 +109,7 @@ export const products: Product[] = [
     coverImageSrc: "/decks/zhenskiy-krug-muzhskoy-put/1.jpg",
     detailText: "43 карты с архетипами сказок (Василиса, Баба-яга, Иван-царевич и др.).",
     gallery: buildGallery("zhenskiy-krug-muzhskoy-put", 5),
-    yandexDiskUrl: "https://disk.yandex.ru/d/example-zhenskiy-krug"
+    yandexDiskUrl: "https://disk.yandex.ru/d/nF-9wqt4R8dqKQ"
   },
   {
     id: "istochnik",
@@ -126,7 +126,7 @@ export const products: Product[] = [
     coverImageSrc: "/decks/istochnik/1.jpg",
     detailText: "42 карты, 8 разделов: архетипы, стихии, состояния, дары и финал — Источник.",
     gallery: buildGallery("istochnik", 6),
-    yandexDiskUrl: "https://disk.yandex.ru/d/example-istochnik"
+    yandexDiskUrl: "https://disk.yandex.ru/d/Yq9NuXsBnVqpwA"
   },
   {
     id: "magiya-vnutri",
@@ -144,7 +144,7 @@ export const products: Product[] = [
     coverImageSrc: "/decks/magiya-vnutri/1.jpg",
     detailText: "36 карт-мантр для возвращения к себе.",
     gallery: buildGallery("magiya-vnutri", 6),
-    yandexDiskUrl: "https://disk.yandex.ru/d/example-magiya-vnutri"
+    yandexDiskUrl: "https://disk.yandex.ru/d/6iTeLBDrcl9VYw"
   },
   {
     id: "mama",
@@ -161,7 +161,7 @@ export const products: Product[] = [
     coverImageSrc: "/decks/mama/1.jpg",
     detailText: "45 карт для работы с отношениями с матерью, сепарацией и принятием.",
     gallery: buildGallery("mama", 6),
-    yandexDiskUrl: "https://disk.yandex.ru/d/example-mama"
+    yandexDiskUrl: "https://disk.yandex.ru/d/c89xTJabatOSkg"
   }
 ];
 
