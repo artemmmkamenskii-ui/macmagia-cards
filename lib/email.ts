@@ -1,3 +1,5 @@
+import nodemailer from "nodemailer";
+
 import { calculateOrderTotals } from "@/lib/pricing";
 
 type SendDeliveryEmailInput = {
@@ -18,7 +20,10 @@ function getRequiredEnv(name: string) {
 
 export function isEmailConfigured() {
   return Boolean(
-    process.env.UNISENDER_API_KEY && process.env.UNISENDER_LIST_ID && process.env.DELIVERY_FROM_EMAIL
+    process.env.SMTP_HOST &&
+      process.env.SMTP_USER &&
+      process.env.SMTP_PASSWORD &&
+      process.env.DELIVERY_FROM_EMAIL
   );
 }
 
@@ -33,8 +38,10 @@ export async function sendDeliveryEmail({
     throw new Error("Products not found");
   }
 
-  const apiKey = getRequiredEnv("UNISENDER_API_KEY");
-  const listId = getRequiredEnv("UNISENDER_LIST_ID");
+  const host = getRequiredEnv("SMTP_HOST");
+  const port = Number(process.env.SMTP_PORT || "465");
+  const user = getRequiredEnv("SMTP_USER");
+  const pass = getRequiredEnv("SMTP_PASSWORD");
   const from = getRequiredEnv("DELIVERY_FROM_EMAIL");
   const fromName = process.env.DELIVERY_FROM_NAME || "MacMagia";
   const customerName = name.trim() || "друг";
@@ -73,46 +80,19 @@ export async function sendDeliveryEmail({
       ? `Ваша электронная колода: ${totals.items[0].title}`
       : `Ваш заказ электронных колод: ${totals.items.length} шт.`;
 
-  const body = new URLSearchParams({
-    format: "json",
-    api_key: apiKey,
-    email,
-    sender_name: fromName,
-    sender_email: from,
+  const transporter = nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465,
+    auth: { user, pass }
+  });
+
+  const info = await transporter.sendMail({
+    from: `"${fromName}" <${from}>`,
+    to: email,
     subject,
-    body: html,
-    list_id: listId
+    html
   });
 
-  const response = await fetch("https://api.unisender.com/ru/api/sendEmail", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: body.toString()
-  });
-
-  const payloadText = await response.text();
-
-  if (!response.ok) {
-    throw new Error(`UniSender delivery failed: ${payloadText}`);
-  }
-
-  let payload: unknown;
-
-  try {
-    payload = JSON.parse(payloadText);
-  } catch {
-    throw new Error(`UniSender delivery failed: ${payloadText}`);
-  }
-
-  if (payload && typeof payload === "object" && "error" in payload && payload.error) {
-    const message =
-      "error_info" in payload && typeof payload.error_info === "string"
-        ? payload.error_info
-        : String(payload.error);
-    throw new Error(`UniSender delivery failed: ${message}`);
-  }
-
-  return payload;
+  return { messageId: info.messageId };
 }
