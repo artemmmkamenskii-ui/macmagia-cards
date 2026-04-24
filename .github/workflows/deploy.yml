@@ -53,6 +53,16 @@ jobs:
             -e "ssh -p ${{ secrets.DEPLOY_PORT }} -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes" \
             ./ "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:~/macmagia/"
 
+      - name: Inject payment env vars on server
+        run: |
+          ssh -p "${{ secrets.DEPLOY_PORT }}" -i ~/.ssh/deploy_key \
+            "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+            "ENV=~/macmagia/.env.local; touch \$ENV; \
+             grep -v '^NEXT_PUBLIC_SITE_URL=\|^YOOKASSA_' \$ENV > /tmp/_env.tmp && mv /tmp/_env.tmp \$ENV; \
+             echo 'NEXT_PUBLIC_SITE_URL=https://macmagia.ru' >> \$ENV; \
+             echo 'YOOKASSA_SHOP_ID=${{ secrets.YOOKASSA_SHOP_ID }}' >> \$ENV; \
+             echo 'YOOKASSA_SECRET_KEY=${{ secrets.YOOKASSA_SECRET_KEY }}' >> \$ENV"
+
       - name: Install, build and restart app
         run: |
           ssh -p "${{ secrets.DEPLOY_PORT }}" -i ~/.ssh/deploy_key "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" <<'EOF'
