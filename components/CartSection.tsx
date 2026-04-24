@@ -174,7 +174,7 @@ export default function CartSection() {
             </label>
 
             <label className="cart-consent">
-              <input type="checkbox" required />
+              <input type="checkbox" defaultChecked required />
               <span>
                 Нажимая «Оплатить», я принимаю условия{" "}
                 <Link href="/offer" target="_blank">публичной оферты</Link>
