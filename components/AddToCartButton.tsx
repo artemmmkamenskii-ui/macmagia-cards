@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useCart } from "@/components/CartProvider";
 
 type AddToCartButtonProps = {
@@ -17,13 +19,20 @@ export default function AddToCartButton({
   const added = isInCart(productId);
 
   return (
-    <button
-      className={`button ${variant === "ghost" ? "button--ghost" : "button--primary"}`}
-      type="button"
-      onClick={() => addToCart(productId)}
-      disabled={added}
-    >
-      {added ? "Уже в корзине" : label || "В корзину"}
-    </button>
+    <div className="add-to-cart">
+      <button
+        className={`button ${variant === "ghost" ? "button--ghost" : "button--primary"}`}
+        type="button"
+        onClick={() => addToCart(productId)}
+        disabled={added}
+      >
+        {added ? "Уже в корзине" : label || "В корзину"}
+      </button>
+      {added ? (
+        <Link className="button button--secondary" href="/#cart">
+          Перейти в корзину
+        </Link>
+      ) : null}
+    </div>
   );
 }
