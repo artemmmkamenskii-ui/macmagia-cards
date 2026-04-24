@@ -15,18 +15,25 @@ export default function AddToCartButton({
   variant = "primary",
   label
 }: AddToCartButtonProps) {
-  const { addToCart, isInCart } = useCart();
+  const { addToCart, removeFromCart, isInCart } = useCart();
   const added = isInCart(productId);
+
+  function handleClick() {
+    if (added) {
+      removeFromCart(productId);
+    } else {
+      addToCart(productId);
+    }
+  }
 
   return (
     <div className="add-to-cart">
       <button
         className={`button ${variant === "ghost" ? "button--ghost" : "button--primary"}`}
         type="button"
-        onClick={() => addToCart(productId)}
-        disabled={added}
+        onClick={handleClick}
       >
-        {added ? "Уже в корзине" : label || "В корзину"}
+        {added ? "Убрать из корзины" : label || "В корзину"}
       </button>
       {added ? (
         <Link className="button button--secondary" href="/#cart">
