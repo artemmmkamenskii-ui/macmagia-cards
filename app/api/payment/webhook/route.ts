@@ -37,7 +37,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    if (payment.metadata.source !== "cards") {
+    const source = payment.metadata.source;
+
+    if (source !== "cards") {
+      if (source) {
+        const forwardUrl = `https://macmagia.ru/${source}/api/payment/webhook`;
+        await fetch(forwardUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+      }
       return NextResponse.json({ ok: true });
     }
 
