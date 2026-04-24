@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState, type FormEvent } from "react";
 
 import { useCart } from "@/components/CartProvider";
@@ -170,6 +171,16 @@ export default function CartSection() {
                 placeholder="mail@example.com"
                 required
               />
+            </label>
+
+            <label className="cart-consent">
+              <input type="checkbox" required />
+              <span>
+                Нажимая «Оплатить», я принимаю условия{" "}
+                <Link href="/offer" target="_blank">публичной оферты</Link>
+                {" "}и даю согласие на{" "}
+                <Link href="/policy" target="_blank">обработку персональных данных</Link>
+              </span>
             </label>
 
             <button disabled={isSubmitting || totals.quantity === 0} type="submit">

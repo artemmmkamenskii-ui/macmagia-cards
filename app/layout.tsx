@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { CartProvider } from "@/components/CartProvider";
+import CookieConsent from "@/components/CookieConsent";
 
 import "./globals.css";
 
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="ru">
       <body>
         <CartProvider>{children}</CartProvider>
+        <CookieConsent />
       </body>
     </html>
   );
