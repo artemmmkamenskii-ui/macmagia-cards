@@ -74,15 +74,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No products found in payment metadata." }, { status: 400 });
     }
 
-    await sendDeliveryEmail({
-      email,
-      name,
-      productIds
-    });
+    try {
+      await sendDeliveryEmail({
+        email,
+        name,
+        productIds
+      });
+      console.log(`[webhook] delivery email sent to ${email} for payment ${body.object.id}`);
+    } catch (deliveryError) {
+      const reason = deliveryError instanceof Error ? deliveryError.message : String(deliveryError);
+      console.error(`[webhook] delivery email FAILED for ${email} (payment ${body.object.id}): ${reason}`);
+      throw deliveryError;
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Webhook processing failed.";
+    console.error(`[webhook] processing error: ${message}`);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
