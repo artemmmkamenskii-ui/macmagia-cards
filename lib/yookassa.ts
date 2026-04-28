@@ -56,6 +56,8 @@ export async function createYooKassaPayment({
     throw new Error("Products not found");
   }
 
+  const normalizedEmail = email.replace(/\s+/g, "").toLowerCase();
+
   const description =
     totals.items.length === 1
       ? `Покупка электронной колоды "${totals.items[0].title}"`
@@ -80,7 +82,7 @@ export async function createYooKassaPayment({
       },
       description,
       receipt: {
-        customer: { email },
+        customer: { email: normalizedEmail },
         items: totals.items.map((item) => {
           const unitPrice = totals.qualifiesForDiscount
             ? (totals.total / totals.quantity)
@@ -98,7 +100,7 @@ export async function createYooKassaPayment({
       metadata: {
         source: "cards",
         productIds: JSON.stringify(productIds),
-        email,
+        email: normalizedEmail,
         name,
         quantity: String(totals.quantity),
         subtotal: String(totals.subtotal),
