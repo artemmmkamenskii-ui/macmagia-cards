@@ -76,7 +76,7 @@ jobs:
             cd ~/macmagia
             npm install
             npm run build
-            pm2 restart macmagia || pm2 start npm --name macmagia -- start
+            pm2 restart macmagia --update-env || pm2 start npm --name macmagia -- start
             pm2 save
           EOF
 
