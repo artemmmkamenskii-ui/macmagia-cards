@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import CartSection from "@/components/CartSection";
+import JsonLd from "@/components/JsonLd";
 import BenefitsSection from "@/components/Sections/BenefitsSection";
 import CatalogSection from "@/components/Sections/CatalogSection";
 import FaqSection from "@/components/Sections/FaqSection";
@@ -11,6 +12,7 @@ import Topbar from "@/components/Topbar";
 export default function HomePage() {
   return (
     <main className="page-shell">
+      <JsonLd />
       <Topbar />
       <HeroSection />
       <CatalogSection />

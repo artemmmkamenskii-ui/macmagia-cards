@@ -1224,3 +1224,17 @@ input {
   gap: 10px;
   align-items: center;
 }
+
+.hero__subtitle {
+  margin: 12px 0 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #4a4a4a;
+}
+
+@media (max-width: 768px) {
+  .hero__subtitle {
+    font-size: 1rem;
+  }
+}
