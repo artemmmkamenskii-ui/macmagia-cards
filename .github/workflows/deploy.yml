@@ -69,6 +69,23 @@ jobs:
              echo 'DELIVERY_FROM_EMAIL=${{ secrets.DELIVERY_FROM_EMAIL }}' >> \$ENV; \
              echo 'DELIVERY_FROM_NAME=MacMagia' >> \$ENV"
 
+      # Доступ к колодам выдаёт платформа (lib/provision.ts), письмо со ссылками
+      # на Яндекс.Диск больше не отправляется. PROVISION_SECRET переписываем
+      # только если он задан в секретах репозитория — иначе рабочее значение
+      # на сервере осталось бы затёртым пустой строкой.
+      - name: Inject platform provisioning env vars on server
+        run: |
+          ssh -p "${{ secrets.DEPLOY_PORT }}" -i ~/.ssh/deploy_key \
+            "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+            "ENV=~/macmagia/.env.local; touch \$ENV; \
+             grep -v '^LK_PROVISION_URL=\|^LK_PLAN_SLUG=' \$ENV > /tmp/_env.prov.tmp && mv /tmp/_env.prov.tmp \$ENV; \
+             echo 'LK_PROVISION_URL=https://lk.macmagia.ru/api/provision' >> \$ENV; \
+             echo 'LK_PLAN_SLUG=bazovyy' >> \$ENV; \
+             if [ -n '${{ secrets.PROVISION_SECRET }}' ]; then \
+               grep -v '^PROVISION_SECRET=' \$ENV > /tmp/_env.sec.tmp && mv /tmp/_env.sec.tmp \$ENV; \
+               echo 'PROVISION_SECRET=${{ secrets.PROVISION_SECRET }}' >> \$ENV; \
+             else echo 'PROVISION_SECRET не задан в секретах — оставляю значение на сервере'; fi"
+
       - name: Install, build and restart app
         run: |
           ssh -p "${{ secrets.DEPLOY_PORT }}" -i ~/.ssh/deploy_key "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" <<'EOF'
