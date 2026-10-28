@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 
-import { sendDeliveryEmail, isEmailConfigured } from "@/lib/email";
+import {
+  deckCourseSlug,
+  getPlanSlug,
+  isProvisionConfigured,
+  provisionDeckAccess,
+  ProvisionFatalError
+} from "@/lib/provision";
 import { isProcessed, markProcessed, unmarkProcessed } from "@/lib/idempotency";
 import { getYooKassaPayment, isYooKassaConfigured, verifyWebhookSecret } from "@/lib/yookassa";
 
@@ -19,9 +25,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid webhook secret." }, { status: 401 });
     }
 
-    if (!isYooKassaConfigured() || !isEmailConfigured()) {
+    if (!isYooKassaConfigured() || !isProvisionConfigured()) {
       return NextResponse.json(
-        { error: "Оплата или email-доставка еще не настроены." },
+        { error: "Оплата или выдача доступа ещё не настроены." },
         { status: 503 }
       );
     }
@@ -93,15 +99,38 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No products found in payment metadata." }, { status: 400 });
     }
 
+    // Все купленные колоды выдаём ОДНИМ вызовом: провижн генерит пароль при
+    // каждом обращении, поэтому вызовы по одной перетёрли бы пароли друг друга
+    // и рабочим остался бы только последний.
     markProcessed(emailKey);
     try {
-      await sendDeliveryEmail({ email, name, productIds });
-      console.log(`[webhook] delivery email sent to ${email} for payment ${paymentId}`);
-    } catch (deliveryError) {
+      const amount = Number(payment.amount?.value);
+      const result = await provisionDeckAccess({
+        email,
+        name: name ?? null,
+        courseSlugs: productIds.map(deckCourseSlug),
+        planSlug: getPlanSlug(),
+        yookassaPaymentId: paymentId,
+        amountKopecks: Number.isFinite(amount) ? Math.round(amount * 100) : 0
+      });
+      console.log(
+        `[webhook] access provisioned for ${email} (payment ${paymentId}, ` +
+          `decks=${productIds.join(",")}, mode=${result.mode})`
+      );
+    } catch (provisionError) {
+      const reason =
+        provisionError instanceof Error ? provisionError.message : String(provisionError);
+      console.error(
+        `[webhook] provision FAILED for ${email} (payment ${paymentId}): ${reason}`
+      );
+      // 4xx — наша ошибка конфигурации: повторы ЮKassa не помогут. Отмечаем
+      // платёж как необработанный, чтобы выдать руками, и отвечаем 200.
+      if (provisionError instanceof ProvisionFatalError) {
+        unmarkProcessed(emailKey);
+        return NextResponse.json({ ok: true, provisioned: false });
+      }
       unmarkProcessed(emailKey);
-      const reason = deliveryError instanceof Error ? deliveryError.message : String(deliveryError);
-      console.error(`[webhook] delivery email FAILED for ${email} (payment ${paymentId}): ${reason}`);
-      throw deliveryError;
+      throw provisionError;
     }
 
     return NextResponse.json({ ok: true });
