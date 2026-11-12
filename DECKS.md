@@ -56,7 +56,7 @@ curl -X POST https://macmagia.ru/cards/api/payment/webhook \
 друг друга.
 
 ```bash
-ssh -i ~/.ssh/macmagia_admin ubuntu@159.194.240.232 'bash -s' <<'EOF'
+ssh -i ~/.ssh/macmagia_admin ubuntu@lk.macmagia.ru 'bash -s' <<'EOF'
 S=$(grep "^PROVISION_SECRET=" /home/ubuntu/macmagia-lk/.env | cut -d= -f2-)
 curl -s -o /dev/stdout -w "\nHTTP %{http_code}\n" -X POST https://lk.macmagia.ru/api/provision \
   -H "Content-Type: application/json" -H "x-provision-secret: $S" \
